@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+
+    <title></title>
+    <link rel="stylesheet" href="dist/reveal.css" />
+    <link rel="stylesheet" href="dist/theme/black.css" id="theme" />
+    <link rel="stylesheet" href="plugin/highlight/zenburn.css" />
+	<link rel="stylesheet" href="css/layout.css" />
+	<link rel="stylesheet" href="plugin/customcontrols/style.css">
+
+
+
+    <script defer src="dist/fontawesome/all.min.js"></script>
+
+	<script type="text/javascript">
+		var forgetPop = true;
+		function onPopState(event) {
+			if(forgetPop){
+				forgetPop = false;
+			} else {
+				parent.postMessage(event.target.location.href, "app://obsidian.md");
+			}
+        }
+		window.onpopstate = onPopState;
+		window.onmessage = event => {
+			if(event.data == "reload"){
+				window.document.location.reload();
+			}
+			forgetPop = true;
+		}
+
+		function fitElements(){
+			const itemsToFit = document.getElementsByClassName('fitText');
+			for (const item in itemsToFit) {
+				if (Object.hasOwnProperty.call(itemsToFit, item)) {
+					var element = itemsToFit[item];
+					fitElement(element,1, 1000);
+					element.classList.remove('fitText');
+				}
+			}
+		}
+
+		function fitElement(element, start, end){
+
+			let size = (end + start) / 2;
+			element.style.fontSize = `${size}px`;
+
+			if(Math.abs(start - end) < 1){
+				while(element.scrollHeight > element.offsetHeight){
+					size--;
+					element.style.fontSize = `${size}px`;
+				}
+				return;
+			}
+
+			if(element.scrollHeight > element.offsetHeight){
+				fitElement(element, start, size);
+			} else {
+				fitElement(element, size, end);
+			}		
+		}
+
+
+		document.onreadystatechange = () => {
+			fitElements();
+			if (document.readyState === 'complete') {
+				if (window.location.href.indexOf("?export") != -1){
+					parent.postMessage(event.target.location.href, "app://obsidian.md");
+				}
+				if (window.location.href.indexOf("print-pdf") != -1){
+					let stateCheck = setInterval(() => {
+						clearInterval(stateCheck);
+						window.print();
+					}, 250);
+				}
+			}
+	};
+
+
+        </script>
+  </head>
+  <body>
+    <div class="reveal">
+      <div class="slides"><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Introduction to Neo4j 
+<img src="Attachments/Pasted image 20230314234050.png" alt="" style="object-fit: scale-down">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Graph Database
+- Graph database stores nodes and relationships instead of table, or documents
+- Nodes are entities in a graph
+- Realtion provides connection between two nodes
+<img src="Excalidraw/graph_db.excalidraw.svg" alt="" style="width: .svgpx; object-fit: fill">
+</div>
+
+<aside class="notes"><ul>
+<li>Labels are provided to the nodes to represent the diffent roles for the node.<ul>
+<li>Node can hold any number of key-value pair or properties</li>
+<li>Relation have a direction, a type (same as labels for a node), a start node and an end node.</li>
+</ul>
+</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+What is Neo4j?
+- Neo4j is a native graph database
+- Implements a true graph model all the way down to the storage level
+- The data is stored as you whiteboard it, instead of as a "graph abstraction" on top of another technology
+- Neo4j is written in Java and Scala
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+RDBMS vs Neo4j
+
+- In relational databases, reference to other rows and tables are indicated by referring to a primary key attributes via foreign key colums
+- When many-to-many relationships occur in the model, you must introduce a `JOIN` table
+</div>
+
+<aside class="notes"><ul>
+<li>Joins are computed at query time by matching primary and foreign keys of all rows in the connected tables which are compute-heavy and memory-intensive.</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Attachments/Pasted image 20230314233502.png" alt="" style="width: Source Neo4jpx; object-fit: fill">
+
+*Image Source: Neo4j*
+</div>
+
+<aside class="notes"><ul>
+<li>Here, we search the Person (Employees) table for the name Alice and get her ID. </li>
+<li>Then we search that ID 815 in the Dept_Members JOIN table to locate all the rows with the</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+The same information can be stored using a Graph database.
+<img src="Attachments/Pasted image 20230314233642.png" alt="" style="object-fit: scale-down">
+
+*Image Source: Neo4j*
+</div>
+
+<aside class="notes"><ul>
+<li>In the above graph version, we have a single node for Alice with a label of Person. </li>
+<li>Alice belongs to 3 different departments, so we create a node for each one and with a label of Department. </li>
+<li>To find out which departments Alice belongs to, we would search the graph for Alice’s node, then traverse all of the <code>BELONGS_TO</code> relationships from Alice to find the Department nodes she is connected to.</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Introduction to Cypher
+
+- Cypher is a Neo4j's graph query language
+- Lets you store and retrieve data to and  from the graph. It is like SQL for graphs.
+</div>
+
+<aside class="notes"><ul>
+<li>Cypher provides a visual way of matching patterns of relations, which makes queries both easy to read and write.</li>
+</ul>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+How would you represent it in English?
+
+<p> Harry is friends with Sally. Harry works in TAI</p>
+
+<img src="Excalidraw/cypher_example.excalidraw.svg" alt="" style="width: .svgpx; object-fit: fill">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+### Cypher example 
+```cypher
+CREATE (harry:Person {name: "Harry"})-[:IS_FRIENDS_WITH]-> (sally:Person {name: "Sally"})
+
+CREATE (harry) -[:WORKS_IN]->(c:Company {name: "TAI"})
+
+RETURN harry, sally, c
+```
+</div>
+
+<aside class="notes"><p>For example, you have a simple graph as shown in the image below. How would you represent it in English?
+Cypher provides a visual way of matching patterns of relations, which makes queries both easy to read and write.</p>
+<p>For example, you have a simple graph as shown in the image below. How would you represent it in English?</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Representing nodes in Cypher
+- To represent a node in Cypher, we sourround the node with parentheses e.g `(node)`
+- Here, the parentheses look similar to the circles that  represents the nodes.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Nodes
+
+<img src="Excalidraw/nodes.excalidraw.svg" alt="" style="width: .svgpx; object-fit: fill">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Node variables
+
+- In cypher we can refer to a node, we can give it a variable such as (p) for person or (t) for thing. 
+- We might want to use longer variables names such as (person) or (thing) to be more expressive.
+</div>
+
+<aside class="notes"><p>If you do not want to use the node later in the query you can specify an anonymous node using empty parentheses ().</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Node labels
+- Labels are kind of tags and allows you to specify certain types of entities to look for or create. 
+- In our example, `Person` , and `Company`  are the labels.
+</div>
+
+<aside class="notes"><p>The labels in Cypher are  similar to tables in SQL, you can tell SQL query to find a person&#39;s information from a Person or Employee or Customer table, similarly you can tell Cypher to only check those labels for that information.</p>
+</aside></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Example of nodes in Cypher
+
+```cypher
+() //anonymous node (no label or variable) can refer to any node in the database 
+(p:Person) //using variable p and label Person
+(:Person) //no variable, label Person 
+(work:Company) //using variable work and label Company
+```
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Relationships in Cypher
+- To fully utilze the power of a graph database, we also need to express the realtionships between our nodes.
+- Realtionships in Cypher are represented using an arrow `-->` or `<--`  between two nodes.
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Relationship type
+- Just like how labels group nodes, relationship types categorize and add meaning to a relationships
+- The relationship types can be placed in a square brackets inside the arrow
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Example of relationship types
+-  [: IS_FREINDS_WITH] - makes sense when we put with it (Harry IS_FRIENDS_WITH Sally)
+- [ :WORKS_IN] - makes sense when nodes (Harry WORKS_IN TAI)
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+<img src="Excalidraw/cypher_example.excalidraw.svg" alt="" style="width: .svgpx; object-fit: fill">
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Relationship variables
+- If we want to refer to a relationship later in query we can give it a variable
+- For example, you could use either `-[rel]->` or 
+`-[rel:WORKS_IN]->`
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Example
+```cypher
+//data stored with this direction
+CREATE (p:Person)-[:LIKES]->(t:Technology)
+
+//query relationship backwards will not return results
+MATCH (p:Person)<-[:LIKES]-(t:Technology)
+
+//better to query with undirected relationship unless sure of direction
+MATCH (p:Person)-[:LIKES]-(t:Technology)
+```
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+Node or relationship properties
+- Properties are name-values pairs that provides additional details to our nodes and realtionship
+- Node property: (p:Person {name: 'Harry'})
+- Relationship property: -[rel: IS_FRIENDS_WITH {since: 2018}]
+</div></script></section><section  data-markdown><script type="text/template"><!-- .slide: class="drop" -->
+<div class="" style="position: absolute; left: 0px; top: 0px; height: 700px; width: 960px; min-height: 700px; display: flex; flex-direction: column; align-items: center; justify-content: center" absolute="true">
+
+# Demo
+</div></script></section></div>
+    </div>
+
+    <script src="dist/reveal.js"></script>
+
+    <script src="plugin/markdown/markdown.js"></script>
+    <script src="plugin/highlight/highlight.js"></script>
+    <script src="plugin/zoom/zoom.js"></script>
+    <script src="plugin/notes/notes.js"></script>
+    <script src="plugin/math/math.js"></script>
+	<script src="plugin/mermaid/mermaid.js"></script>
+	<script src="plugin/chart/chart.min.js"></script>
+	<script src="plugin/chart/plugin.js"></script>
+	<script src="plugin/customcontrols/plugin.js"></script>
+
+    <script>
+      function extend() {
+        var target = {};
+        for (var i = 0; i < arguments.length; i++) {
+          var source = arguments[i];
+          for (var key in source) {
+            if (source.hasOwnProperty(key)) {
+              target[key] = source[key];
+            }
+          }
+        }
+        return target;
+      }
+
+	  function isLight(color) {
+		let hex = color.replace('#', '');
+
+		// convert #fff => #ffffff
+		if(hex.length == 3){
+			hex = `${hex[0]}${hex[0]}${hex[1]}${hex[1]}${hex[2]}${hex[2]}`;
+		}
+
+		const c_r = parseInt(hex.substr(0, 2), 16);
+		const c_g = parseInt(hex.substr(2, 2), 16);
+		const c_b = parseInt(hex.substr(4, 2), 16);
+		const brightness = ((c_r * 299) + (c_g * 587) + (c_b * 114)) / 1000;
+		return brightness > 155;
+	}
+
+	var bgColor = getComputedStyle(document.documentElement).getPropertyValue('--r-background-color').trim();
+	var isLight = isLight(bgColor);
+
+	if(isLight){
+		document.body.classList.add('has-light-background');
+	} else {
+		document.body.classList.add('has-dark-background');
+	}
+
+      // default options to init reveal.js
+      var defaultOptions = {
+        controls: true,
+        progress: true,
+        history: true,
+        center: true,
+        transition: 'default', // none/fade/slide/convex/concave/zoom
+        plugins: [
+          RevealMarkdown,
+          RevealHighlight,
+          RevealZoom,
+          RevealNotes,
+          RevealMath.MathJax3,
+		  RevealMermaid,
+		  RevealChart,
+		  RevealCustomControls,
+        ],
+
+
+    	allottedTime: 120 * 1000,
+
+		mathjax3: {
+			mathjax: 'plugin/math/mathjax/tex-mml-chtml.js',
+		},
+		markdown: {
+		  gfm: true,
+		  mangle: true,
+		  pedantic: false,
+		  smartLists: false,
+		  smartypants: false,
+		},
+
+		mermaid: {
+			theme: isLight ? 'default' : 'dark',
+		},
+
+		customcontrols: {
+			controls: [
+			]
+		},
+      };
+
+      // options from URL query string
+      var queryOptions = Reveal().getQueryHash() || {};
+
+      var options = extend(defaultOptions, {"width":960,"height":700,"margin":0.04,"controls":true,"progress":true,"slideNumber":false,"transition":"slide","transitionSpeed":"default"}, queryOptions);
+    </script>
+
+    <script>
+      Reveal.initialize(options);
+    </script>
+  </body>
+
+  <!-- created with Advanced Slides -->
+</html>
